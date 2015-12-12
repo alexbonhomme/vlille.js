@@ -10,9 +10,41 @@ var vlille = (function () {
      * @param  {String} xml [description]
      * @return {Object}     [description]
      */
-    function xmlToJson(xml) {
-        //TODO
-        return xml;
+    function xmlToJson(xmlNode) {
+        var i,
+            j,
+            len,
+            len2,
+            markers = xmlNode.childNodes[0].children || [],
+            attributes,
+            jsonMarker,
+            jsonArray = [];
+
+        // imperative way
+        for (i = 0, len = markers.length; i < len; i += 1) {
+            jsonMarker = {};
+            attributes = markers[i].attributes;
+
+            for (j = 0, len2 = attributes.length; j < len2; j += 1) {
+                jsonMarker[attributes[j].name] = attributes[j].value;
+            }
+
+            jsonArray.push(jsonMarker);
+        }
+
+        // functionnal way
+        // markers = [].slice.call(markers);
+        // jsonArray = markers.map(function (marker) {
+        //     var attributes = [].slice.call(marker.attributes);
+
+        //     return attributes.reduce(function (prevAttr, currentAttr) {
+        //         prevAttr[currentAttr.name] = currentAttr.value;
+
+        //         return prevAttr;
+        //     }, {});
+        // });
+
+        return jsonArray;
     }
 
 
@@ -55,7 +87,7 @@ var vlille = (function () {
             var target = event.target;
 
             if (target.status === 200) {
-                resolve(xmlToJson(target.response));
+                resolve(xmlToJson(target.responseXML));
             } else {
                 reject(target);
             }
