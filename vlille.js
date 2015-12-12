@@ -32,18 +32,6 @@ var vlille = (function () {
             jsonArray.push(jsonMarker);
         }
 
-        // functionnal way
-        // markers = [].slice.call(markers);
-        // jsonArray = markers.map(function (marker) {
-        //     var attributes = [].slice.call(marker.attributes);
-
-        //     return attributes.reduce(function (prevAttr, currentAttr) {
-        //         prevAttr[currentAttr.name] = currentAttr.value;
-
-        //         return prevAttr;
-        //     }, {});
-        // });
-
         return jsonArray;
     }
 
