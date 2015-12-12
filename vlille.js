@@ -7,15 +7,15 @@ var vlille = (function () {
 
     /**
      *
-     * @param  {String} xml [description]
-     * @return {Object}     [description]
+     * @param  {Document} xml [description]
+     * @return {Object}       [description]
      */
-    function xmlToJson(xmlNode) {
+    function xmlStationsToJson(xml) {
         var i,
             j,
             len,
             len2,
-            markers = xmlNode.childNodes[0].children || [],
+            markers = xml.childNodes[0].children || [],
             attributes,
             jsonMarker,
             jsonArray = [];
@@ -35,6 +35,23 @@ var vlille = (function () {
         return jsonArray;
     }
 
+    /**
+     *
+     * @param  {Document} xmlNode [description]
+     * @return {Object}           [description]
+     */
+    function xmlStationToJson(xml) {
+        var i,
+            len,
+            stationData = xml.childNodes[0].children || [],
+            jsonStation = {};
+
+        for (i = 0, len = stationData.length; i < len; i += 1) {
+            jsonStation[stationData[i].nodeName] = stationData[i].innerHTML;
+        }
+
+        return jsonStation;
+    }
 
     /**
      * Format params object to url query args string.
@@ -61,7 +78,7 @@ var vlille = (function () {
      * @param  {Function} resolve [description]
      * @param  {Function} reject  [description]
      */
-    function request(url, params, resolve, reject) {
+    function requestXML(url, params, resolve, reject) {
         var requestObj = new XMLHttpRequest(),
             urlWithParams = url;
 
@@ -75,7 +92,7 @@ var vlille = (function () {
             var target = event.target;
 
             if (target.status === 200) {
-                resolve(xmlToJson(target.responseXML));
+                resolve(target.responseXML);
             } else {
                 reject(target);
             }
@@ -92,6 +109,11 @@ var vlille = (function () {
      * Publics
      */
 
+    /**
+     * Gets informations about the station whit the given `id`.
+     * @param  {String} id [description]
+     * @return {Function}  [description]
+     */
     function getStation(id) {
         var params = {
             borne: id
@@ -99,15 +121,27 @@ var vlille = (function () {
 
         return {
             then: function (resolve, reject) {
-                request(API_PROXY_BASE + 'xml-stations.aspx', params, resolve, reject);
+                var xmlResolve = function (xml) {
+                    resolve(xmlStationToJson(xml));
+                };
+
+                requestXML(API_PROXY_BASE + 'xml-station.aspx', params, xmlResolve, reject);
             }
         };
     }
 
+    /**
+     * Gets full stations list.
+     * @return {Function} [description]
+     */
     function getStations() {
         return {
             then: function (resolve, reject) {
-                request(API_PROXY_BASE + 'xml-stations.aspx', null, resolve, reject);
+                var xmlResolve = function (xml) {
+                    resolve(xmlStationsToJson(xml));
+                };
+
+                requestXML(API_PROXY_BASE + 'xml-stations.aspx', null, xmlResolve, reject);
             }
         };
     }
