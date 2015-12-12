@@ -1,0 +1,16 @@
+{
+  "name": "vlille.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "vlille.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blckshrk/vlille.js.git"
+  },
+  "author": "Alexandre Bonhomme",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blckshrk/vlille.js/issues"
+  },
+  "homepage": "https://github.com/blckshrk/vlille.js#readme"
+}
