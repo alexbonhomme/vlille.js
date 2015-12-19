@@ -106,8 +106,57 @@ var vlille = (function () {
     }
 
     /**
+     * @return {Number} Radians value of the number.
+     */
+    Number.prototype.toRadians = function () {
+        return this * Math.PI / 180;
+    };
+
+    /**
+     * @see http://www.movable-type.co.uk/scripts/latlong.html
+     * @param  {Object} coord1 [description]
+     * @param  {Object} coord2 [description]
+     * @return {Number}        [description]
+     */
+    function haversineDistance(coord1, coord2) {
+        var R = 6371000, // metres
+            phi1,
+            phi2,
+            deltaPhi,
+            deltaLambda,
+            a,
+            c;
+
+        phi1 = coord1.lat.toRadians();
+        phi2 = coord2.lat.toRadians();
+        deltaPhi = (coord2.lat - coord1.lat).toRadians();
+        deltaLambda = (coord2.lon - coord1.lon).toRadians();
+
+        a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) + Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+    }
+
+    /**
      * Publics
      */
+
+    /**
+     * Gets full stations list.
+     * @return {Function} [description]
+     */
+    function getAllStations() {
+        return {
+            then: function (resolve, reject) {
+                var xmlResolve = function (xml) {
+                    resolve(xmlStationsToJson(xml));
+                };
+
+                requestXML(API_PROXY_BASE + 'xml-stations.aspx', null, xmlResolve, reject);
+            }
+        };
+    }
 
     /**
      * Gets informations about the station whit the given `id`.
@@ -131,23 +180,50 @@ var vlille = (function () {
     }
 
     /**
-     * Gets full stations list.
-     * @return {Function} [description]
+     * Gets closest stations using Haversine formula.
+     * The second parameter `max` (default value = 3) allow one to configure the maximum number of results.
+     * @param  {Object} coord [description]
+     * @param  {Int} max      [description]
+     * @return {Function}     [description]
      */
-    function getStations() {
-        return {
-            then: function (resolve, reject) {
-                var xmlResolve = function (xml) {
-                    resolve(xmlStationsToJson(xml));
-                };
+    function getClosestStations(coords, max) {
+        if (max === undefined) {
+            max = 3;
+        }
 
-                requestXML(API_PROXY_BASE + 'xml-stations.aspx', null, xmlResolve, reject);
-            }
+        function then(resolve, reject) {
+            getAllStations().then(function (stations) {
+                var closetStations = stations
+                    .map(function (station) {
+                        var stationCoords = {
+                            lat: parseFloat(station.lat),
+                            lon: parseFloat(station.lng)
+                        };
+
+                        station.distance = haversineDistance(coords, stationCoords);
+
+                        return station;
+                    })
+                    .sort(function (a, b) {
+                        return a.distance - b.distance;
+                    });
+
+                if (closetStations.length > max) {
+                    closetStations.length = max;
+                }
+
+                resolve(closetStations);
+            }, reject);
+        }
+
+        return {
+            then: then
         };
     }
 
     return {
-        stations: getStations,
-        station: getStation
+        stations: getAllStations,
+        station: getStation,
+        closestStations: getClosestStations
     };
 }());
