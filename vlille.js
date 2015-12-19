@@ -180,37 +180,39 @@ var vlille = (function () {
     }
 
     /**
-     * Gets closest station using Haversine formula.
-     * @param  {[type]} coord [description]
-     * @return {[type]}       [description]
+     * Gets closest stations using Haversine formula.
+     * The second parameter `max` (default value = 3) allow one to configure the maximum number of results.
+     * @param  {Object} coord [description]
+     * @param  {Int} max      [description]
+     * @return {Function}     [description]
      */
-    function getClosestStation(coords) {
+    function getClosestStations(coords, max) {
+        if (max === undefined) {
+            max = 3;
+        }
 
         function then(resolve, reject) {
             getAllStations().then(function (stations) {
-                var i,
-                    len,
-                    station,
-                    stationCoords,
-                    stationDistance,
-                    distance = Infinity,
-                    closetStation;
+                var closetStations = stations
+                    .map(function (station) {
+                        var stationCoords = {
+                            lat: parseFloat(station.lat),
+                            lon: parseFloat(station.lng)
+                        };
 
-                for (i = 0, len = stations.length; i < len; i += 1) {
-                    station = stations[i];
-                    stationCoords = {
-                        lat: parseFloat(station.lat),
-                        lon: parseFloat(station.lng)
-                    };
+                        station.distance = haversineDistance(coords, stationCoords);
 
-                    stationDistance = haversineDistance(coords, stationCoords);
-                    if (stationDistance < distance) {
-                        closetStation = station;
-                        distance = stationDistance;
-                    }
+                        return station;
+                    })
+                    .sort(function (a, b) {
+                        return a.distance - b.distance;
+                    });
+
+                if (closetStations.length > max) {
+                    closetStations.length = max;
                 }
 
-                resolve(closetStation);
+                resolve(closetStations);
             }, reject);
         }
 
@@ -222,6 +224,6 @@ var vlille = (function () {
     return {
         stations: getAllStations,
         station: getStation,
-        closestStation: getClosestStation
+        closestStations: getClosestStations
     };
 }());
