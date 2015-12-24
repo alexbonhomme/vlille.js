@@ -29,7 +29,8 @@ module.exports = function (grunt) {
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     MODULE_LIST = [
         sub('src/%s.ajax.js'),
-        sub('src/%s.math.js')
+        sub('src/%s.math.js'),
+        sub('src/%s.promise.js')
     ];
 
     DIST_HEAD_LIST = [

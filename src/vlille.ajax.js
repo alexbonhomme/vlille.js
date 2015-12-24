@@ -24,35 +24,36 @@ function initVlilleAjax(context) {
 
     /**
      * Basic XHR request implementation.
-     * @param  {String}   url     [description]
-     * @param  {Object}   params  [description]
-     * @param  {Function} resolve [description]
-     * @param  {Function} reject  [description]
+     * @param  {String}  url     [description]
+     * @param  {Object}  params  [description]
      */
-    vlille.requestXML = function (url, params, resolve, reject) {
-        var requestObj = new window.XMLHttpRequest(),
-            urlWithParams = url;
+    vlille.requestXML = function (url, params) {
+        return new vlille.Promise(function (resolve, reject) {
+            var requestObj = new window.XMLHttpRequest(),
+                urlWithParams = url;
 
-        if (params) {
-            urlWithParams += '?' + formatParams(params);
-        }
-
-        requestObj.open('GET', urlWithParams);
-
-        requestObj.addEventListener('load', function (event) {
-            var target = event.target;
-
-            if (target.status === 200) {
-                resolve(target.responseXML);
-            } else {
-                reject(target);
+            if (params) {
+                urlWithParams += '?' + formatParams(params);
             }
-        });
 
-        requestObj.addEventListener('error', function (event) {
-            reject(new Error(event));
-        });
 
-        requestObj.send();
+            requestObj.open('GET', urlWithParams);
+
+            requestObj.addEventListener('load', function (event) {
+                var target = event.target;
+
+                if (target.status === 200) {
+                    resolve(target.responseXML);
+                } else {
+                    reject(target);
+                }
+            });
+
+            requestObj.addEventListener('error', function (event) {
+                reject(new Error(event));
+            });
+
+            requestObj.send();
+        });
     };
 }
