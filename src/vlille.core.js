@@ -120,7 +120,7 @@ function initVlilleCore(context) {
      * @param  {Int} max      [description]
      * @return {Function}     [description]
      */
-    vlille.losestStations = function (coords, max) {
+    vlille.closestStations = function (coords, max) {
         if (max === undefined) {
             max = 3;
         }
