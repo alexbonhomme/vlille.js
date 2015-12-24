@@ -1,4 +1,4 @@
-/*global API_PROXY_BASE*/
+var API_PROXY_BASE = 'http://localhost:8001/';
 
 /**
  * Init wrapper for the core module.
