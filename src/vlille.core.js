@@ -78,39 +78,27 @@ function initVlilleCore(context) {
 
     /**
      * Gets full stations list.
-     * @return {Function} [description]
+     * @return {Promise} [description]
      */
     vlille.stations = function () {
-        return {
-            then: function (resolve, reject) {
-                var xmlResolve = function (xml) {
-                    resolve(xmlStationsToJson(xml));
-                };
-
-                vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null, xmlResolve, reject);
-            }
-        };
+        return vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
+            return xmlStationsToJson(xml);
+        });
     };
 
     /**
      * Gets informations about the station whit the given `id`.
      * @param  {String} id [description]
-     * @return {Function}  [description]
+     * @return {Promise}   [description]
      */
     vlille.station = function (id) {
         var params = {
             borne: id
         };
 
-        return {
-            then: function (resolve, reject) {
-                var xmlResolve = function (xml) {
-                    resolve(xmlStationToJson(xml));
-                };
-
-                vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params, xmlResolve, reject);
-            }
-        };
+        return vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params).then(function (xml) {
+            return xmlStationToJson(xml);
+        });
     };
 
     /**
@@ -118,40 +106,36 @@ function initVlilleCore(context) {
      * The second parameter `max` (default value = 3) allow one to configure the maximum number of results.
      * @param  {Object} coord [description]
      * @param  {Int} max      [description]
-     * @return {Function}     [description]
+     * @return {Promise}      [description]
      */
     vlille.closestStations = function (coords, max) {
         if (max === undefined) {
             max = 3;
         }
 
-        function then(resolve, reject) {
-            vlille.stations().then(function (stations) {
-                var closetStations = stations
-                    .map(function (station) {
-                        var stationCoords = {
-                            lat: parseFloat(station.lat),
-                            lon: parseFloat(station.lng)
-                        };
+        return vlille.stations().then(function (stations) {
+            var closetStations = stations
+                // computes distances
+                .map(function (station) {
+                    var stationCoords = {
+                        lat: parseFloat(station.lat),
+                        lon: parseFloat(station.lng)
+                    };
 
-                        station.distance = vlille.haversineDistance(coords, stationCoords);
+                    station.distance = vlille.haversineDistance(coords, stationCoords);
 
-                        return station;
-                    })
-                    .sort(function (a, b) {
-                        return a.distance - b.distance;
-                    });
+                    return station;
+                })
+                // sort by distance
+                .sort(function (a, b) {
+                    return a.distance - b.distance;
+                });
 
-                if (closetStations.length > max) {
-                    closetStations.length = max;
-                }
+            if (closetStations.length > max) {
+                closetStations.length = max;
+            }
 
-                resolve(closetStations);
-            }, reject);
-        }
-
-        return {
-            then: then
-        };
+            return closetStations;
+        });
     };
 }
