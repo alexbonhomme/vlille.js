@@ -81,15 +81,9 @@ function initVlilleCore(context) {
      * @return {Function} [description]
      */
     vlille.stations = function () {
-        return {
-            then: function (resolve, reject) {
-                var xmlResolve = function (xml) {
-                    resolve(xmlStationsToJson(xml));
-                };
-
-                vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null, xmlResolve, reject);
-            }
-        };
+        return vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
+            return xmlStationsToJson(xml);
+        });
     };
 
     /**
@@ -102,15 +96,9 @@ function initVlilleCore(context) {
             borne: id
         };
 
-        return {
-            then: function (resolve, reject) {
-                var xmlResolve = function (xml) {
-                    resolve(xmlStationToJson(xml));
-                };
-
-                vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params, xmlResolve, reject);
-            }
-        };
+        return vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params).then(function (xml) {
+            return xmlStationToJson(xml);
+        });
     };
 
     /**
