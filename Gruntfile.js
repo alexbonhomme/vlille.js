@@ -34,7 +34,7 @@ module.exports = function (grunt) {
 
     DIST_HEAD_LIST = [
         sub('src/%s.intro.js'),
-        sub('src/%s.const.js'),
+        // sub('src/%s.const.js'),
         sub('src/%s.core.js')
     ];
 
@@ -99,7 +99,8 @@ module.exports = function (grunt) {
         jshint: {
             all_files: [
                 'grunt.js',
-                sub('src/%s.!(intro|outro|const)*.js')
+                // sub('src/%s.!(intro|outro|const)*.js')
+                sub('src/%s.!(intro|outro)*.js')
             ],
             options: {
                 jshintrc: '.jshintrc'
