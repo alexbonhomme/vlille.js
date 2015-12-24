@@ -1,22 +1,22 @@
-/*global initLibraryCore, initLibraryModule, initLibrarySubmodule */
-var initLibrary = function (context) {
+/*global initVlilleCore, initLibraryModule*/
+var initVlille = function (context) {
     'use strict';
 
-    initLibraryCore(context);
+    initVlilleCore(context);
     initLibraryModule(context);
 
-    return context.Library;
+    return context.vlille;
 };
 
 
 if (typeof define === 'function' && define.amd) {
-    // Expose Library as an AMD module if it's loaded with RequireJS or
+    // Expose vlille as an AMD module if it's loaded with RequireJS or
     // similar.
     define(function () {
-        return initLibrary({});
+        return initVlille({});
     });
 } else {
-    // Load Library normally (creating a Library global) if not using an AMD
+    // Load vlille normally (creating a vlille global) if not using an AMD
     // loader.
-    initLibrary(this);
+    initVlille(this);
 }
