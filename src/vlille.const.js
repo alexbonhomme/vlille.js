@@ -1,0 +1,1 @@
+var API_PROXY_BASE = 'http://localhost:8001/';

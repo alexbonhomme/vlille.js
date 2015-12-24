@@ -28,7 +28,8 @@ module.exports = function (grunt) {
     // Add your modules to this list
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     MODULE_LIST = [
-        sub('src/%s.module.js')
+        sub('src/%s.ajax.js'),
+        sub('src/%s.math.js')
     ];
 
     DIST_HEAD_LIST = [

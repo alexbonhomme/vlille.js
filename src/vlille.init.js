@@ -1,9 +1,10 @@
-/*global initVlilleCore, initLibraryModule*/
+/*global initVlilleCore, initVlilleAjax, initVlilleMath*/
 var initVlille = function (context) {
     'use strict';
 
     initVlilleCore(context);
-    initLibraryModule(context);
+    initVlilleAjax(context);
+    initVlilleMath(context);
 
     return context.vlille;
 };
