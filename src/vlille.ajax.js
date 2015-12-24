@@ -24,8 +24,9 @@ function initVlilleAjax(context) {
 
     /**
      * Basic XHR request implementation.
-     * @param  {String}  url     [description]
-     * @param  {Object}  params  [description]
+     * @param  {String}  url    [description]
+     * @param  {Object}  params [description]
+     * @return {Promise}        [description]
      */
     vlille.requestXML = function (url, params) {
         return new vlille.Promise(function (resolve, reject) {

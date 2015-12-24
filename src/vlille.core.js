@@ -78,7 +78,7 @@ function initVlilleCore(context) {
 
     /**
      * Gets full stations list.
-     * @return {Function} [description]
+     * @return {Promise} [description]
      */
     vlille.stations = function () {
         return vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
@@ -89,7 +89,7 @@ function initVlilleCore(context) {
     /**
      * Gets informations about the station whit the given `id`.
      * @param  {String} id [description]
-     * @return {Function}  [description]
+     * @return {Promise}   [description]
      */
     vlille.station = function (id) {
         var params = {
@@ -106,7 +106,7 @@ function initVlilleCore(context) {
      * The second parameter `max` (default value = 3) allow one to configure the maximum number of results.
      * @param  {Object} coord [description]
      * @param  {Int} max      [description]
-     * @return {Function}     [description]
+     * @return {Promise}      [description]
      */
     vlille.closestStations = function (coords, max) {
         if (max === undefined) {

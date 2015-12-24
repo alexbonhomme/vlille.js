@@ -137,6 +137,11 @@ function initVlillePromise(context) {
             }
         }
 
+        /**
+         *
+         * @param  {Function}   onFulfilled [description]
+         * @param  {Function}   onRejected  [description]
+         */
         this.done = function (onFulfilled, onRejected) {
             // ensure we are always asynchronous
             setTimeout(function () {
@@ -147,6 +152,12 @@ function initVlillePromise(context) {
             }, 0);
         };
 
+        /**
+         *
+         * @param  {Function} onFulfilled [description]
+         * @param  {Function} onRejected  [description]
+         * @return {Promise}              [description]
+         */
         this.then = function (onFulfilled, onRejected) {
             var self = this;
 
@@ -174,6 +185,7 @@ function initVlillePromise(context) {
                 });
             });
         };
+
 
         doResolve(fn, resolve, reject);
     }
