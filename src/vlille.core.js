@@ -113,33 +113,29 @@ function initVlilleCore(context) {
             max = 3;
         }
 
-        function then(resolve, reject) {
-            vlille.stations().then(function (stations) {
-                var closetStations = stations
-                    .map(function (station) {
-                        var stationCoords = {
-                            lat: parseFloat(station.lat),
-                            lon: parseFloat(station.lng)
-                        };
+        return vlille.stations().then(function (stations) {
+            var closetStations = stations
+                // computes distances
+                .map(function (station) {
+                    var stationCoords = {
+                        lat: parseFloat(station.lat),
+                        lon: parseFloat(station.lng)
+                    };
 
-                        station.distance = vlille.haversineDistance(coords, stationCoords);
+                    station.distance = vlille.haversineDistance(coords, stationCoords);
 
-                        return station;
-                    })
-                    .sort(function (a, b) {
-                        return a.distance - b.distance;
-                    });
+                    return station;
+                })
+                // sort by distance
+                .sort(function (a, b) {
+                    return a.distance - b.distance;
+                });
 
-                if (closetStations.length > max) {
-                    closetStations.length = max;
-                }
+            if (closetStations.length > max) {
+                closetStations.length = max;
+            }
 
-                resolve(closetStations);
-            }, reject);
-        }
-
-        return {
-            then: then
-        };
+            return closetStations;
+        });
     };
 }
