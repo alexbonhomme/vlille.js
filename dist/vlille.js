@@ -1,4 +1,4 @@
-/*! vlille.js - v0.1.0 - 2015-12-24 - Alexandre Bonhomme */
+/*! vlille.js - v0.2.0 - 2015-12-24 - Alexandre Bonhomme */
 ;(function (global) {
 
 var API_PROXY_BASE = 'http://localhost:8001/';
@@ -81,7 +81,7 @@ function initVlilleCore(context) {
 
     /**
      * Gets full stations list.
-     * @return {Function} [description]
+     * @return {Promise} [description]
      */
     vlille.stations = function () {
         return vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
@@ -92,7 +92,7 @@ function initVlilleCore(context) {
     /**
      * Gets informations about the station whit the given `id`.
      * @param  {String} id [description]
-     * @return {Function}  [description]
+     * @return {Promise}   [description]
      */
     vlille.station = function (id) {
         var params = {
@@ -109,7 +109,7 @@ function initVlilleCore(context) {
      * The second parameter `max` (default value = 3) allow one to configure the maximum number of results.
      * @param  {Object} coord [description]
      * @param  {Int} max      [description]
-     * @return {Function}     [description]
+     * @return {Promise}      [description]
      */
     vlille.closestStations = function (coords, max) {
         if (max === undefined) {
@@ -169,8 +169,9 @@ function initVlilleAjax(context) {
 
     /**
      * Basic XHR request implementation.
-     * @param  {String}  url     [description]
-     * @param  {Object}  params  [description]
+     * @param  {String}  url    [description]
+     * @param  {Object}  params [description]
+     * @return {Promise}        [description]
      */
     vlille.requestXML = function (url, params) {
         return new vlille.Promise(function (resolve, reject) {
@@ -380,6 +381,11 @@ function initVlillePromise(context) {
             }
         }
 
+        /**
+         *
+         * @param  {Function}   onFulfilled [description]
+         * @param  {Function}   onRejected  [description]
+         */
         this.done = function (onFulfilled, onRejected) {
             // ensure we are always asynchronous
             setTimeout(function () {
@@ -390,6 +396,12 @@ function initVlillePromise(context) {
             }, 0);
         };
 
+        /**
+         *
+         * @param  {Function} onFulfilled [description]
+         * @param  {Function} onRejected  [description]
+         * @return {Promise}              [description]
+         */
         this.then = function (onFulfilled, onRejected) {
             var self = this;
 
@@ -417,6 +429,7 @@ function initVlillePromise(context) {
                 });
             });
         };
+
 
         doResolve(fn, resolve, reject);
     }
