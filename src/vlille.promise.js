@@ -1,12 +1,12 @@
 /**
  * Basic implementation of Promise.
+ * @see http://stackoverflow.com/questions/23772801/basic-javascript-promise-implementation-attempt/23785244#23785244
  * @see https://www.promisejs.org/implementing/
  */
 function initVlillePromise(context) {
     'use strict';
 
     var vlille = context.vlille,
-        Promise,
 
         PENDING = 0,
         FULFILLED = 1,
@@ -62,29 +62,49 @@ function initVlillePromise(context) {
                 done = true;
                 onRejected(reason);
             });
-        } catch (ex) {
+        } catch (e) {
             if (done) {
                 return;
             }
 
             done = true;
-            onRejected(ex);
+            onRejected(e);
         }
     }
 
-    Promise = function (fn) {
-        var state = PENDING,
-            value = null,
-            handlers = [];
+    /**
+     * @constructor
+     * @param {Function} fn [description]
+     */
+    function Promise(fn) {
+        if (typeof this !== 'object') {
+            throw new TypeError('Promises must be constructed via new');
+        }
+
+        if (typeof fn !== 'function') {
+            throw new TypeError('fn must be a function');
+        }
+
+        var state = PENDING, // store state which can be PENDING, FULFILLED or REJECTED
+
+            value = null, // store value once FULFILLED or REJECTED
+
+            handlers = []; // store sucess & failure handlers
 
         function fulfill(result) {
             state = FULFILLED;
             value = result;
+
+            handlers.forEach(handle);
+            handlers = null;
         }
 
         function reject(error) {
             state = REJECTED;
             value = error;
+
+            handlers.forEach(handle);
+            handlers = null;
         }
 
         function resolve(result) {
@@ -135,8 +155,8 @@ function initVlillePromise(context) {
                     if (typeof onFulfilled === 'function') {
                         try {
                             return resolve(onFulfilled(result));
-                        } catch (ex) {
-                            return reject(ex);
+                        } catch (e) {
+                            return reject(e);
                         }
                     } else {
                         return resolve(result);
@@ -145,8 +165,8 @@ function initVlillePromise(context) {
                     if (typeof onRejected === 'function') {
                         try {
                             return resolve(onRejected(error));
-                        } catch (ex) {
-                            return reject(ex);
+                        } catch (e) {
+                            return reject(e);
                         }
                     } else {
                         return reject(error);
@@ -156,7 +176,7 @@ function initVlillePromise(context) {
         };
 
         doResolve(fn, resolve, reject);
-    };
+    }
 
     vlille.Promise = Promise;
 }
