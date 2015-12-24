@@ -1,5 +1,3 @@
-/*jslint browser:true*/
-
 var vlille = (function () {
     'use strict';
 

@@ -1,9 +1,7 @@
-/*jslint browser:true*/
 function initVlilleAjax(context) {
     'use strict';
 
     var vlille = context.vlille;
-
 
     /**
      * Format params object to url query args string.
@@ -32,7 +30,7 @@ function initVlilleAjax(context) {
      * @param  {Function} reject  [description]
      */
     vlille.requestXML = function (url, params, resolve, reject) {
-        var requestObj = new XMLHttpRequest(),
+        var requestObj = new window.XMLHttpRequest(),
             urlWithParams = url;
 
         if (params) {
