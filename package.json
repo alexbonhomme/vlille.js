@@ -2,7 +2,6 @@
   "name": "vlille.js",
   "version": "0.1.0",
   "description": "",
-  "main": "vlille.js",
   "directories": {
     "test": "test",
     "doc": "doc"
