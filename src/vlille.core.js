@@ -1,7 +1,28 @@
-var vlille = (function () {
+var API_PROXY_BASE = 'http://localhost:8001/';
+
+/**
+ * Init wrapper for the core module.
+ * @param {Object} The Object that the library gets attached to in library.init.js. If the library was not loaded with an AMD loader such as require.js, this is the global Object.
+ */
+function initVlilleCore(context) {
     'use strict';
 
-    var API_PROXY_BASE = 'http://localhost:8001/';
+    /**
+     * @constructor
+     * @param  {Object} opt_config [description]
+     * @return {Object}            [description]
+     */
+    var vlille = function (opt_config) {
+        opt_config = opt_config || {};
+
+        return this;
+    };
+
+    context.vlille = vlille;
+
+    /**
+     * Privates
+     */
 
     /**
      *
@@ -52,91 +73,6 @@ var vlille = (function () {
     }
 
     /**
-     * Format params object to url query args string.
-     * @param  {Object} params [description]
-     * @return {String}        [description]
-     */
-    function formatParams(params) {
-        var key,
-            query = [];
-
-        for (key in params) {
-            if (params.hasOwnProperty(key)) {
-                query.push(key + '=' + params[key]);
-            }
-        }
-
-        return query.join('&');
-    }
-
-    /**
-     * Basic XHR request implementation.
-     * @param  {String}   url     [description]
-     * @param  {Object}   params  [description]
-     * @param  {Function} resolve [description]
-     * @param  {Function} reject  [description]
-     */
-    function requestXML(url, params, resolve, reject) {
-        var requestObj = new XMLHttpRequest(),
-            urlWithParams = url;
-
-        if (params) {
-            urlWithParams += '?' + formatParams(params);
-        }
-
-        requestObj.open('GET', urlWithParams);
-
-        requestObj.addEventListener('load', function (event) {
-            var target = event.target;
-
-            if (target.status === 200) {
-                resolve(target.responseXML);
-            } else {
-                reject(target);
-            }
-        });
-
-        requestObj.addEventListener('error', function (event) {
-            reject(new Error(event));
-        });
-
-        requestObj.send();
-    }
-
-    /**
-     * @return {Number} Radians value of the number.
-     */
-    Number.prototype.toRadians = function () {
-        return this * Math.PI / 180;
-    };
-
-    /**
-     * @see http://www.movable-type.co.uk/scripts/latlong.html
-     * @param  {Object} coord1 [description]
-     * @param  {Object} coord2 [description]
-     * @return {Number}        [description]
-     */
-    function haversineDistance(coord1, coord2) {
-        var R = 6371000, // metres
-            phi1,
-            phi2,
-            deltaPhi,
-            deltaLambda,
-            a,
-            c;
-
-        phi1 = coord1.lat.toRadians();
-        phi2 = coord2.lat.toRadians();
-        deltaPhi = (coord2.lat - coord1.lat).toRadians();
-        deltaLambda = (coord2.lon - coord1.lon).toRadians();
-
-        a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) + Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
-        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return R * c;
-    }
-
-    /**
      * Publics
      */
 
@@ -144,24 +80,24 @@ var vlille = (function () {
      * Gets full stations list.
      * @return {Function} [description]
      */
-    function getAllStations() {
+    vlille.stations = function () {
         return {
             then: function (resolve, reject) {
                 var xmlResolve = function (xml) {
                     resolve(xmlStationsToJson(xml));
                 };
 
-                requestXML(API_PROXY_BASE + 'xml-stations.aspx', null, xmlResolve, reject);
+                vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null, xmlResolve, reject);
             }
         };
-    }
+    };
 
     /**
      * Gets informations about the station whit the given `id`.
      * @param  {String} id [description]
      * @return {Function}  [description]
      */
-    function getStation(id) {
+    vlille.station = function (id) {
         var params = {
             borne: id
         };
@@ -172,10 +108,10 @@ var vlille = (function () {
                     resolve(xmlStationToJson(xml));
                 };
 
-                requestXML(API_PROXY_BASE + 'xml-station.aspx', params, xmlResolve, reject);
+                vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params, xmlResolve, reject);
             }
         };
-    }
+    };
 
     /**
      * Gets closest stations using Haversine formula.
@@ -184,13 +120,13 @@ var vlille = (function () {
      * @param  {Int} max      [description]
      * @return {Function}     [description]
      */
-    function getClosestStations(coords, max) {
+    vlille.closestStations = function (coords, max) {
         if (max === undefined) {
             max = 3;
         }
 
         function then(resolve, reject) {
-            getAllStations().then(function (stations) {
+            vlille.stations().then(function (stations) {
                 var closetStations = stations
                     .map(function (station) {
                         var stationCoords = {
@@ -198,7 +134,7 @@ var vlille = (function () {
                             lon: parseFloat(station.lng)
                         };
 
-                        station.distance = haversineDistance(coords, stationCoords);
+                        station.distance = vlille.haversineDistance(coords, stationCoords);
 
                         return station;
                     })
@@ -217,11 +153,5 @@ var vlille = (function () {
         return {
             then: then
         };
-    }
-
-    return {
-        stations: getAllStations,
-        station: getStation,
-        closestStations: getClosestStations
     };
-}());
+}
