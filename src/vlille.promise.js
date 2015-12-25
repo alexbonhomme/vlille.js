@@ -6,7 +6,7 @@
 function initVlillePromise(context) {
     'use strict';
 
-    var vlille = context.vlille,
+    var Vlille = context.Vlille,
 
         PENDING = 0,
         FULFILLED = 1,
@@ -190,5 +190,5 @@ function initVlillePromise(context) {
         doResolve(fn, resolve, reject);
     }
 
-    vlille.Promise = Promise;
+    Vlille.Promise = Promise;
 }

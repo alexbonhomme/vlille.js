@@ -1,4 +1,4 @@
-/*! vlille.js - v0.2.0 - 2015-12-24 - Alexandre Bonhomme */
+/*! vlille.js - v0.2.0 - 2015-12-25 - Alexandre Bonhomme */
 ;(function (global) {
 
 var API_PROXY_BASE = 'http://localhost:8001/';
@@ -15,13 +15,18 @@ function initVlilleCore(context) {
      * @param  {Object} opt_config [description]
      * @return {Object}            [description]
      */
-    var vlille = function (opt_config) {
+    function Vlille(opt_config) {
+        // enforces new
+        if (!(this instanceof Vlille)) {
+            return new Vlille(opt_config);
+        }
+
         opt_config = opt_config || {};
 
         return this;
-    };
+    }
 
-    context.vlille = vlille;
+    context.Vlille = Vlille;
 
     /**
      * Privates
@@ -83,8 +88,8 @@ function initVlilleCore(context) {
      * Gets full stations list.
      * @return {Promise} [description]
      */
-    vlille.stations = function () {
-        return vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
+    Vlille.prototype.stations = function () {
+        return Vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
             return xmlStationsToJson(xml);
         });
     };
@@ -94,12 +99,12 @@ function initVlilleCore(context) {
      * @param  {String} id [description]
      * @return {Promise}   [description]
      */
-    vlille.station = function (id) {
+    Vlille.prototype.station = function (id) {
         var params = {
             borne: id
         };
 
-        return vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params).then(function (xml) {
+        return Vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params).then(function (xml) {
             return xmlStationToJson(xml);
         });
     };
@@ -111,12 +116,12 @@ function initVlilleCore(context) {
      * @param  {Int} max      [description]
      * @return {Promise}      [description]
      */
-    vlille.closestStations = function (coords, max) {
+    Vlille.prototype.closestStations = function (coords, max) {
         if (max === undefined) {
             max = 3;
         }
 
-        return vlille.stations().then(function (stations) {
+        return this.stations().then(function (stations) {
             var closetStations = stations
                 // computes distances
                 .map(function (station) {
@@ -125,7 +130,7 @@ function initVlilleCore(context) {
                         lon: parseFloat(station.lng)
                     };
 
-                    station.distance = vlille.haversineDistance(coords, stationCoords);
+                    station.distance = Vlille.haversineDistance(coords, stationCoords);
 
                     return station;
                 })
@@ -142,11 +147,10 @@ function initVlilleCore(context) {
         });
     };
 }
-
 function initVlilleAjax(context) {
     'use strict';
 
-    var vlille = context.vlille;
+    var Vlille = context.Vlille;
 
     /**
      * Format params object to url query args string.
@@ -173,8 +177,8 @@ function initVlilleAjax(context) {
      * @param  {Object}  params [description]
      * @return {Promise}        [description]
      */
-    vlille.requestXML = function (url, params) {
-        return new vlille.Promise(function (resolve, reject) {
+    Vlille.requestXML = function (url, params) {
+        return new Vlille.Promise(function (resolve, reject) {
             var requestObj = new window.XMLHttpRequest(),
                 urlWithParams = url;
 
@@ -206,7 +210,7 @@ function initVlilleAjax(context) {
 function initVlilleMath(context) {
     'use strict';
 
-    var vlille = context.vlille;
+    var Vlille = context.Vlille;
 
     /**
      * @return {Number} Radians value of the number.
@@ -221,7 +225,7 @@ function initVlilleMath(context) {
      * @param  {Object} coord2 [description]
      * @return {Number}        [description]
      */
-    vlille.haversineDistance = function (coord1, coord2) {
+    Vlille.haversineDistance = function (coord1, coord2) {
         var R = 6371000, // meters
             phi1,
             phi2,
@@ -241,7 +245,6 @@ function initVlilleMath(context) {
         return R * c;
     };
 }
-
 /**
  * Basic implementation of Promise.
  * @see http://stackoverflow.com/questions/23772801/basic-javascript-promise-implementation-attempt/23785244#23785244
@@ -250,7 +253,7 @@ function initVlilleMath(context) {
 function initVlillePromise(context) {
     'use strict';
 
-    var vlille = context.vlille,
+    var Vlille = context.Vlille,
 
         PENDING = 0,
         FULFILLED = 1,
@@ -340,7 +343,7 @@ function initVlillePromise(context) {
             value = result;
 
             handlers.forEach(handle);
-            handlers = null;
+            handlers = [];
         }
 
         function reject(error) {
@@ -348,7 +351,7 @@ function initVlillePromise(context) {
             value = error;
 
             handlers.forEach(handle);
-            handlers = null;
+            handlers = [];
         }
 
         function resolve(result) {
@@ -434,7 +437,7 @@ function initVlillePromise(context) {
         doResolve(fn, resolve, reject);
     }
 
-    vlille.Promise = Promise;
+    Vlille.Promise = Promise;
 }
 /*global initVlilleCore, initVlilleAjax, initVlilleMath, initVlillePromise*/
 var initVlille = function (context) {

@@ -1,7 +1,7 @@
 function initVlilleMath(context) {
     'use strict';
 
-    var vlille = context.vlille;
+    var Vlille = context.Vlille;
 
     /**
      * @return {Number} Radians value of the number.
@@ -16,7 +16,7 @@ function initVlilleMath(context) {
      * @param  {Object} coord2 [description]
      * @return {Number}        [description]
      */
-    vlille.haversineDistance = function (coord1, coord2) {
+    Vlille.haversineDistance = function (coord1, coord2) {
         var R = 6371000, // meters
             phi1,
             phi2,

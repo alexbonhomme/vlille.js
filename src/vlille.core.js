@@ -12,13 +12,18 @@ function initVlilleCore(context) {
      * @param  {Object} opt_config [description]
      * @return {Object}            [description]
      */
-    var vlille = function (opt_config) {
+    function Vlille(opt_config) {
+        // enforces new
+        if (!(this instanceof Vlille)) {
+            return new Vlille(opt_config);
+        }
+
         opt_config = opt_config || {};
 
         return this;
-    };
+    }
 
-    context.vlille = vlille;
+    context.Vlille = Vlille;
 
     /**
      * Privates
@@ -80,8 +85,8 @@ function initVlilleCore(context) {
      * Gets full stations list.
      * @return {Promise} [description]
      */
-    vlille.stations = function () {
-        return vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
+    Vlille.prototype.stations = function () {
+        return Vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
             return xmlStationsToJson(xml);
         });
     };
@@ -91,12 +96,12 @@ function initVlilleCore(context) {
      * @param  {String} id [description]
      * @return {Promise}   [description]
      */
-    vlille.station = function (id) {
+    Vlille.prototype.station = function (id) {
         var params = {
             borne: id
         };
 
-        return vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params).then(function (xml) {
+        return Vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params).then(function (xml) {
             return xmlStationToJson(xml);
         });
     };
@@ -108,12 +113,12 @@ function initVlilleCore(context) {
      * @param  {Int} max      [description]
      * @return {Promise}      [description]
      */
-    vlille.closestStations = function (coords, max) {
+    Vlille.prototype.closestStations = function (coords, max) {
         if (max === undefined) {
             max = 3;
         }
 
-        return vlille.stations().then(function (stations) {
+        return this.stations().then(function (stations) {
             var closetStations = stations
                 // computes distances
                 .map(function (station) {
@@ -122,7 +127,7 @@ function initVlilleCore(context) {
                         lon: parseFloat(station.lng)
                     };
 
-                    station.distance = vlille.haversineDistance(coords, stationCoords);
+                    station.distance = Vlille.haversineDistance(coords, stationCoords);
 
                     return station;
                 })
