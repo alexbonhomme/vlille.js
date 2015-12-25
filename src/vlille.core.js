@@ -19,7 +19,7 @@ function initVlilleCore(context) {
         opt_config = opt_config || {};
 
         if (!opt_config.apiProxyUrl) {
-            throw new Error('You need tp provide a proxy URL.');
+            throw new Error('You have to provide a proxy URL.');
         }
 
         this.apiProxyBase = opt_config.apiProxyUrl;
