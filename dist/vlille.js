@@ -1,8 +1,6 @@
 /*! vlille.js - v0.2.0 - 2015-12-25 - Alexandre Bonhomme */
 ;(function (global) {
 
-var API_PROXY_BASE = 'http://localhost:8001/';
-
 /**
  * Init wrapper for the core module.
  * @param {Object} The Object that the library gets attached to in library.init.js. If the library was not loaded with an AMD loader such as require.js, this is the global Object.
@@ -13,7 +11,7 @@ function initVlilleCore(context) {
     /**
      * @constructor
      * @param  {Object} opt_config [description]
-     * @return {Object}            [description]
+     * @return {Vlille}            [description]
      */
     function Vlille(opt_config) {
         // enforces new
@@ -22,6 +20,12 @@ function initVlilleCore(context) {
         }
 
         opt_config = opt_config || {};
+
+        if (!opt_config.apiProxyUrl) {
+            throw new Error('You need tp provide a proxy URL.');
+        }
+
+        this.apiProxyBase = opt_config.apiProxyUrl;
 
         return this;
     }
@@ -89,7 +93,7 @@ function initVlilleCore(context) {
      * @return {Promise} [description]
      */
     Vlille.prototype.stations = function () {
-        return Vlille.requestXML(API_PROXY_BASE + 'xml-stations.aspx', null).then(function (xml) {
+        return Vlille.requestXML(this.apiProxyBase + 'xml-stations.aspx', null).then(function (xml) {
             return xmlStationsToJson(xml);
         });
     };
@@ -104,7 +108,7 @@ function initVlilleCore(context) {
             borne: id
         };
 
-        return Vlille.requestXML(API_PROXY_BASE + 'xml-station.aspx', params).then(function (xml) {
+        return Vlille.requestXML(this.apiProxyBase + 'xml-station.aspx', params).then(function (xml) {
             return xmlStationToJson(xml);
         });
     };
