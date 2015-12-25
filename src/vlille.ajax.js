@@ -1,7 +1,7 @@
 function initVlilleAjax(context) {
     'use strict';
 
-    var vlille = context.vlille;
+    var Vlille = context.Vlille;
 
     /**
      * Format params object to url query args string.
@@ -28,8 +28,8 @@ function initVlilleAjax(context) {
      * @param  {Object}  params [description]
      * @return {Promise}        [description]
      */
-    vlille.requestXML = function (url, params) {
-        return new vlille.Promise(function (resolve, reject) {
+    Vlille.requestXML = function (url, params) {
+        return new Vlille.Promise(function (resolve, reject) {
             var requestObj = new window.XMLHttpRequest(),
                 urlWithParams = url;
 

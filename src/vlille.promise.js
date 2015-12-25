@@ -6,7 +6,7 @@
 function initVlillePromise(context) {
     'use strict';
 
-    var vlille = context.vlille,
+    var Vlille = context.Vlille,
 
         PENDING = 0,
         FULFILLED = 1,
@@ -96,7 +96,7 @@ function initVlillePromise(context) {
             value = result;
 
             handlers.forEach(handle);
-            handlers = null;
+            handlers = [];
         }
 
         function reject(error) {
@@ -104,7 +104,7 @@ function initVlillePromise(context) {
             value = error;
 
             handlers.forEach(handle);
-            handlers = null;
+            handlers = [];
         }
 
         function resolve(result) {
@@ -190,5 +190,5 @@ function initVlillePromise(context) {
         doResolve(fn, resolve, reject);
     }
 
-    vlille.Promise = Promise;
+    Vlille.Promise = Promise;
 }
