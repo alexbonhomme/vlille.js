@@ -96,7 +96,7 @@ function initVlillePromise(context) {
             value = result;
 
             handlers.forEach(handle);
-            handlers = null;
+            handlers = [];
         }
 
         function reject(error) {
@@ -104,7 +104,7 @@ function initVlillePromise(context) {
             value = error;
 
             handlers.forEach(handle);
-            handlers = null;
+            handlers = [];
         }
 
         function resolve(result) {
