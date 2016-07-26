@@ -1,4 +1,4 @@
-/*! vlille.js - v0.2.0 - 2015-12-25 - Alexandre Bonhomme */
+/*! vlille.js - v0.3.1 - 2016-07-26 - Alexandre Bonhomme */
 ;(function (global) {
 
 /**
@@ -22,10 +22,10 @@ function initVlilleCore(context) {
         opt_config = opt_config || {};
 
         if (!opt_config.apiProxyUrl) {
-            throw new Error('You need tp provide a proxy URL.');
+            throw new Error('You have to provide a proxy URL.');
         }
 
-        this.apiProxyBase = opt_config.apiProxyUrl;
+        this.apiProxyBase = opt_config.apiProxyUrl.substr(-1) === '/' ? opt_config.apiProxyUrl : opt_config.apiProxyUrl + '/';
 
         return this;
     }
