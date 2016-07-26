@@ -22,7 +22,7 @@ function initVlilleCore(context) {
             throw new Error('You have to provide a proxy URL.');
         }
 
-        this.apiProxyBase = opt_config.apiProxyUrl;
+        this.apiProxyBase = opt_config.apiProxyUrl.substr(-1) === '/' ? opt_config.apiProxyUrl : opt_config.apiProxyUrl + '/';
 
         return this;
     }
