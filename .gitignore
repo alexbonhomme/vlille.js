@@ -2,3 +2,5 @@
 .DS_Store
 node_modules
 components
+bump-version.py
+make-release.sh
